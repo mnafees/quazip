@@ -12,7 +12,7 @@
 <h3>Building:</h3>
 
 Building QuaZIP is super simple. Just open the terminal on your Mac/Linux
-or Command Prompt on Windows as type the following:
+or Command Prompt on Windows and type the following:
 ```
 $ mkdir build && cd build
 $ cmake .. -DCMAKE_BUILD_TYPE=(Debug|Release) -DCMAKE_INSTALL_PREFIX=/path/to/install/QuaZIP

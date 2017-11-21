@@ -118,11 +118,14 @@ bool JlCompress::compressSubDir(QuaZip* zip, QString dir, QString origDir, bool 
 
     QDir origDirectory(origDir);
 	if (dir != origDir) {
-		QuaZipFile dirZipFile(zip);
+		zip->setDataDescriptorWritingEnabled(false);
+        QuaZipFile dirZipFile(zip);
 		if (!dirZipFile.open(QIODevice::WriteOnly,
 			QuaZipNewInfo(origDirectory.relativeFilePath(dir) + "/", dir), 0, 0, 0)) {
-				return false;
+				zip->setDataDescriptorWritingEnabled(true);
+                return false;
 		}
+        zip->setDataDescriptorWritingEnabled(true);
 		dirZipFile.close();
 	}
 

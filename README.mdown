@@ -1,4 +1,4 @@
-<h1>QuaZIP</h1>
+<h1>NOT MAINTAINED!! Use https://github.com/stachenov/quazip by the original author instead.</h1>
 
 <p>QuaZIP is the C++ wrapper for Gilles Vollant's ZIP/UNZIP package
 (AKA minizip) using the Qt framework.</p>

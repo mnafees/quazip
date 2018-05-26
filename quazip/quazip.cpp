@@ -140,6 +140,17 @@ class QuaZipPrivate {
       static QTextCodec *defaultFileNameCodec;
 };
 
+enum GeneralPurposeFlag {
+    Encrypted = 0x01,
+    AlgTune1 = 0x02,
+    AlgTune2 = 0x04,
+    HasDataDescriptor = 0x08,
+    PatchedData = 0x20,
+    StrongEncrypted = 0x40,
+    Utf8Names = 0x0800,
+    CentralDirectoryEncrypted = 0x2000
+};
+
 QTextCodec *QuaZipPrivate::defaultFileNameCodec = NULL;
 
 void QuaZipPrivate::clearDirectoryMap()
@@ -504,7 +515,7 @@ bool QuaZip::getCurrentFileInfo(QuaZipFileInfo64 *info)const
   info->diskNumberStart=info_z.disk_num_start;
   info->internalAttr=info_z.internal_fa;
   info->externalAttr=info_z.external_fa;
-  info->name=p->fileNameCodec->toUnicode(fileName);
+  info->name=info_z.flag & Utf8Names ? QString(fileName.constData()).toUtf8() : p->fileNameCodec->toUnicode(fileName.constData());
   info->comment=p->commentCodec->toUnicode(comment);
   info->extra=extra;
   info->dateTime=QDateTime(
@@ -524,11 +535,12 @@ QString QuaZip::getCurrentFileName()const
     return QString();
   }
   if(!isOpen()||!hasCurrentFile()) return QString();
+  unz_file_info64 info_z;
   QByteArray fileName(MAX_FILE_NAME_LENGTH, 0);
-  if((fakeThis->p->zipError=unzGetCurrentFileInfo64(p->unzFile_f, NULL, fileName.data(), fileName.size(),
+  if((fakeThis->p->zipError=unzGetCurrentFileInfo64(p->unzFile_f, &info_z, fileName.data(), fileName.size(),
       NULL, 0, NULL, 0))!=UNZ_OK)
     return QString();
-  QString result = p->fileNameCodec->toUnicode(fileName.constData());
+  QString result = info_z.flag & Utf8Names ? QString(fileName.constData()).toUtf8() : p->fileNameCodec->toUnicode(fileName.constData());;
   if (result.isEmpty())
       return result;
   // Add to directory map
